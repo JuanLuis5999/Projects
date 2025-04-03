@@ -30,3 +30,13 @@ This project automates the processing and filtering of INEGI geospatial datasets
 ## 🧠 Purpose
 To demonstrate backend automation with spatial data processing and integration of user-driven filtering through a web interface.
 
+##🧠 How It Works
+
+The project automates the process of loading and filtering geospatial coverage data using official datasets. Here's what each main script in the /load folder does:
+Script	Function
+INEGI_Load.py	Loads base geographic data from INEGI to PostgreSQL, forming the spatial foundation for further queries.
+coveragezone_load.py	Loads coverage zone files (e.g., .dat) and prepares spatial views for service matching.
+ServiceCoverages_Load.py	Cross-references coverage zones with service station names and inserts filtered matches.
+ProgramBase_Load.py	Loads base programming or reference tables for merging with spatial zones and services.
+TDTBase_Load.py	Handles loading and preparation of TDT-specific coverage data (digital terrestrial television).
+
