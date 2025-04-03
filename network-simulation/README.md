@@ -36,17 +36,6 @@ It includes a graphical interface built with Tkinter to show node states in real
 - Real-time updates as nodes transmit
 - Final results in charts after simulation completes
 
-## 📸 Example Output
-
-
-
-- Real-time node status:
-*(Tkinter table shown during simulation)*
-
-- Final graphs:
-- 📊 Collisions vs Node
-- ⚡ Transmission rate (kbps) vs Node
-
 
 ## 🧠 Purpose
 
