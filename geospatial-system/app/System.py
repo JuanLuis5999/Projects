@@ -140,7 +140,7 @@ def process():
     connection = psycopg2.connect(
         host='localhost',
         user='postgres',
-        password='Tetra557788.',
+        password='.',
         dbname='postgres2',
         port=5433
     )
