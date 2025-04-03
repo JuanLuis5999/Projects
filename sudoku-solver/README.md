@@ -17,8 +17,6 @@ You can input puzzles through command-line arguments, and the application will s
 ---
 
 ## 🛠 Technologies Used
-
-- Python 3.x
 - Tkinter (for GUI)
 - Recursive algorithms (backtracking)
 
