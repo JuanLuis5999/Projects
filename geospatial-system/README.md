@@ -30,7 +30,7 @@ This project automates the processing and filtering of INEGI geospatial datasets
 ## 🧠 Purpose
 To demonstrate backend automation with spatial data processing and integration of user-driven filtering through a web interface.
 
-##🧠 How It Works
+## 🧠 How It Works
 
 The project automates the process of loading and filtering geospatial coverage data using official datasets. Here's what each main script in the /load folder does:
 Script	Function
