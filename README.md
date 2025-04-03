@@ -34,4 +34,4 @@ A Sudoku solver using backtracking that displays the puzzle and solution through
 
 I'm a developer passionate about solving real-world problems using Python. I enjoy working on backend logic, data handling, and building tools that automate or simulate intelligent behavior.
 
-Contact me on [LinkedIn](https://www.linkedin.com/in/tu-usuario) or at **your.email@example.com**
+Contact me on [LinkedIn](https://www.linkedin.com/in/tu-usuario) or at **galiciacjuan@gmail.com*
