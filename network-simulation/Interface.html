@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIFI SIMULATION</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #b19cd9;
+            overflow-y: scroll;
+        }
+        .chart-container {
+            width: 80%;
+            margin: 10px 0;
+        }
+        canvas {
+            width: 100%;
+            height: 300px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid #b19cd9;
+        }
+        h1 {
+            color: #b19cd9;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transmitted Packets</h1>
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+    <h1>Colisions</h1>
+    <div class="chart-container">
+        <canvas id="myChart2"></canvas>
+    </div>
+    <script>
+        const ctx1 = document.getElementById('myChart').getContext('2d');
+        const ctx2 = document.getElementById('myChart2').getContext('2d');
+
+        const colors = [
+            'rgba(255, 99, 132, 1)', // Red
+            'rgba(54, 162, 235, 1)', // Blue
+            'rgba(255, 206, 86, 1)', // Yellow
+            'rgba(75, 192, 192, 1)', // Teal
+            'rgba(153, 102, 255, 1)', // Purple
+            'rgba(255, 159, 64, 1)', // Orange
+            'rgba(199, 199, 199, 1)', // Grey
+            'rgba(83, 102, 255, 1)', // Light Blue
+            'rgba(150, 159, 64, 1)', // Olive
+            'rgba(230, 99, 132, 1)', // Light Red
+            'rgba(54, 202, 235, 1)', // Light Blue
+            'rgba(255, 250, 86, 1)', // Light Yellow
+            'rgba(75, 222, 192, 1)', // Light Teal
+            'rgba(153, 202, 255, 1)', // Light Purple
+            'rgba(255, 199, 64, 1)', // Light Orange
+            'rgba(199, 199, 230, 1)', // Light Grey
+            'rgba(83, 132, 255, 1)', // Dark Blue
+            'rgba(150, 189, 64, 1)', // Dark Olive
+            'rgba(230, 129, 132, 1)', // Dark Red
+            'rgba(54, 132, 235, 1)', // Dark Blue
+        ];
+
+        const chart1 = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time [s]',
+                            color: '#b19cd9'
+                        },
+                        ticks: {
+                            color: '#b19cd9'
+                        },
+                        grid: {
+                            color: 'rgba(177, 156, 217, 0.1)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Sent Packets',
+                            color: '#b19cd9'
+                        },
+                        ticks: {
+                            color: '#b19cd9'
+                        },
+                        grid: {
+                            color: 'rgba(177, 156, 217, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#b19cd9'
+                        }
+                    }
+                }
+            }
+        });
+
+        const chart2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time [s]',
+                            color: '#b19cd9'
+                        },
+                        ticks: {
+                            color: '#b19cd9'
+                        },
+                        grid: {
+                            color: 'rgba(177, 156, 217, 0.1)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Failures',
+                            color: '#b19cd9'
+                        },
+                        ticks: {
+                            color: '#b19cd9'
+                        },
+                        grid: {
+                            color: 'rgba(177, 156, 217, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#b19cd9'
+                        }
+                    }
+                }
+            }
+        });
+
+        let lastPlottedTime = 0;
+        const dataQueue = [];
+
+        const socket = new WebSocket('ws://localhost:6789');
+
+        socket.onopen = () => {
+            console.log('Connected to WebSocket server');
+        };
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            if (message.complete) {
+                console.log('Simulation complete:', message.tiempo_discreto);
+                return;
+            }
+
+            // Add received data to the queue
+            const roundedTime = Math.floor(message.tiempo_discreto);
+            dataQueue.push({time: roundedTime, data: message.matriz});
+        };
+
+        socket.onclose = () => {
+            console.log('Disconnected from WebSocket server');
+        };
+
+        // Update the charts every second with data from the queue
+        setInterval(() => {
+            if (dataQueue.length > 0) {
+                const {time, data} = dataQueue.shift();
+
+                if (time > lastPlottedTime) {
+                    lastPlottedTime = time;
+                    chart1.data.labels.push(time);
+                    chart2.data.labels.push(time);
+                    data.forEach((fila, index) => {
+                        if (!chart1.data.datasets[index]) {
+                            chart1.data.datasets[index] = {
+                                label: `Node ${fila[0]}`,
+                                data: [],
+                                borderColor: colors[index % colors.length],
+                                backgroundColor: colors[index % colors.length].replace('1)', '0.5)'),
+                                fill: false
+                            };
+                        }
+                        if (!chart2.data.datasets[index]) {
+                            chart2.data.datasets[index] = {
+                                label: `Node ${fila[0]}`,
+                                data: [],
+                                borderColor: colors[index % colors.length],
+                                backgroundColor: colors[index % colors.length].replace('1)', '0.5)'),
+                                fill: false
+                            };
+                        }
+                        chart1.data.datasets[index].data.push(fila[1]);
+                        chart2.data.datasets[index].data.push(fila[2]);  // Use el valor en Matriz[4]
+                    });
+
+                    chart1.update();
+                    chart2.update();
+                }
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
